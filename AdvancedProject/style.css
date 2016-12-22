@@ -28,16 +28,33 @@ table{
 	*display: inline;
 	zoom: 1;
 	}
+
+td {
+    border-width: 1.5px;
+}
 .container:after {
 	content: "";
 	width: 100%;
 	display: inline-block;
     }
 
+.selected{
+    box-shadow: 0px 0px 50px 0px #008000;
+}
 .header{
     width: 100%;
     text-align: center;
     background-color: bisque;
+}
+
+#settings{
+    padding: 10px;
+    position: fixed;
+    width: 250px;
+    height: auto;
+    border: 1px solid;
+    bottom:10px;
+    right:10px;
 }
 /*
 #container1 {
