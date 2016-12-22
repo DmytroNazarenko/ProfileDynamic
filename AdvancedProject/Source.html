@@ -1,0 +1,119 @@
+<script>
+    
+
+    
+</script>
+<html>
+    <head>
+        <script src="jquery-3.1.1.min.js"></script>
+        <script>
+        $("#move").click(function (){
+            alert("aa");
+                //moveAnimate("#p11",0);
+        });
+
+        var direction=[4,7,8,11]
+        function animate(){
+            alert("aa");
+                //moveAnimate("#p11",0);
+        }
+
+
+         function moveAnimate(element, count){
+              console.log(count);
+             if(count >= direction.length) {return; }
+                newParent = '#pos' + direction[count];
+                element = $(element); //Allow passing in either a JQuery object or selector
+                newParent= $(newParent); //Allow passing in either a JQuery object or selector
+                var oldOffset = element.offset();
+                element.appendTo(newParent);
+                var newOffset = element.offset();
+
+                var temp = element.clone().appendTo('body');
+                temp    .css('position', 'absolute')
+                        .css('left', oldOffset.left)
+                        .css('top', oldOffset.top)
+                        .css('zIndex', 1000);
+                element.hide();
+                temp.animate( {'top': newOffset.top, 'left':newOffset.left}, 'slow', function(){
+                   element.show();
+                   temp.remove();
+                   count++;
+                   moveAnimate(element,count);
+                });
+            }
+            
+            
+            
+            function solve(n, m)
+            {
+                if (n > m) {
+                    var tmp;
+                    tmp = n;
+                    n = m;
+                    m = tmp;
+                }
+                var d = [];
+                for(var i = 0 ; i < m+1; i++){
+                    d[i] = [];
+                    for(var j = 0; j < n+1; j++){
+                        d[i][j] = [];
+                        for(var k = 0; k < (1 << n); k++) {
+                            d[i][j][k] = 0;
+                        }
+                    }
+                }
+
+
+                d[0][0][0] = 1;
+                for(var i = 0; i < m; i++) {
+                    for(var j = 0; j < n+1; j++) {
+                        for (var k = 0; k < (1 << n); k++) {
+                            if (j == n) {
+                                d[i + 1][0][k] += d[i][j][k];
+                                continue;
+                            }
+                            if ((k & (1 << (n - j - 1))) === 0) {
+                                if (i != m - 1) 
+                                    d[i][j + 1][k + (1 << (n - j - 1))] += d[i][j][k];
+                                if (j != n - 1 && (k & (1 << (n - j - 2))) === 0) {
+                                    d[i][j + 1][k + (1 << (n - j - 2))] += d[i][j][k];
+                                }
+                            }
+                            else {
+                                d[i][j + 1][k - (1 << (n - j - 1))] += d[i][j][k];
+                            }
+
+                        }
+                    }
+                }
+
+                var sum = 0;
+                for (var k = 0; k < (1 << n); k++) {
+                    sum += d[m][0][k];
+                }
+                return sum;
+            }
+            function main(){
+                //var a = parseInt(prompt());
+                //var b = parseInt(prompt());
+                tableCreate();
+                //var result = solve(a,b);
+                //alert(main(a,b));
+                document.getElementById('output').innerHTML = '<p> Answer: ' + result.toString() +'</p>';
+            }
+            
+        </script>
+    </head>
+<body >
+    <table border=3>
+        <tr><td id="pos1">1<div id="p11"></div></td><td id="pos2">2</td><td id="pos3">3</td></tr>
+        <tr><td id="pos4">4</td><td id="pos5">5</td><td id="pos6">6</td></tr>
+        <tr><td id="pos7">7</td><td id="pos8">8</td><td id="pos9">9</td></tr>
+        <tr><td id="pos10">10</td><td id="pos11">11</td><td id="pos12">12</td></tr>
+    </table>
+
+    <button id="move">Move</button>
+    <div id="output"></div>
+</body>
+</html>

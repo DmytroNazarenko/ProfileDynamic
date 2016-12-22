@@ -1,0 +1,217 @@
+<script>
+    
+
+    
+</script>
+<html>
+    <head>
+        <script src="jquery-3.1.1.min.js"></script>
+        <link rel="stylesheet" href="style.css" />
+
+
+    </head>
+<body >
+<!--
+    <table id="table" border=1 cellspacing = 0>
+        <tr><td id="pos1"><div id="p11"></div></td><td id="pos2"></td><td id="pos3"></td></tr>
+        <tr><td id="pos4"></td><td id="pos5"></td><td id="pos6"></td></tr>
+        <tr><td id="pos7"></td><td id="pos8"></td><td id="pos9"></td></tr>
+        <tr><td id="pos10"></td><td id="pos11"></td><td id="pos12"></td></tr>
+    </table>
+-->
+    <p>N:  <input type="text" id="n" ></input></p>
+    <p>M:  <input type="text" id = "m"></input></p>
+    <button id="move" >Ввести данные</button>
+    <button id="copy" >Копировать</button>
+    <button id="swap" >swap</button>
+    <div id="container0" style="height:250px"></div>
+    <div id="container1" class="container">
+    </div>
+    <div id="container2" class = "container">
+    </div>
+    <script>
+         
+        function createTable( n, m, posi, posj, mask){
+            var table1 = document.createElement('table');
+            var att = document.createAttribute("border");       
+            att.value = "1";       
+            table1.setAttributeNode(att);
+            table1.setAttribute("id","mask0i0j0");
+            var att1 = document.createAttribute("cellspacing");       
+            att1.value = "0";                           
+            table1.setAttributeNode(att1);
+            for (var i = 0; i < n; i++){
+                var tr = document.createElement('tr');   
+                
+                for (var j = 0; j < m; j++){
+                    
+                    var td1 = document.createElement('td');
+                    //td1.className = 'aaa';
+                    var cl = 'class'+i.toString()+'_'+j.toString()
+                    td1.className = cl;
+                    //td1.className = i+'_'+j;
+//                    var attr1 = document.createAttribute("id");      
+//                        attr1.value = "1";
+                    if (i == 0 && j == 0){
+                        td1.style.backgroundColor = "red";
+                        td1.innerHTML = '0';
+                    }
+                    tr.appendChild(td1);
+                    
+//                    if(j < posj) {
+//                                                   
+//                        table1.setAttributeNode(att);
+//                        var attr1 = document.createAttribute("cellspacing");       
+//                        att1.value = "0";                           
+//                        table1.setAttributeNode(att1);
+//                    }
+                }
+
+                //var text1 = document.createTextNode('Text1');
+                //var text2 = document.createTextNode('Text2');
+
+                //td1.appendChild(text1);
+                //td2.appendChild(text2);
+                
+
+                table1.appendChild(tr);
+            }
+            //document.body.appendChild(table1);
+            //document.getElementById("container1"). 
+            $(table1).appendTo("#container1").hide().fadeIn(1000);
+        }
+         
+        function delTable(mask, new_mask, posi, posj){
+            //var old_table = document.getElementById("mask"+mask+"i"+posi+"j"+posj);
+            //old_table.parentElement.removeChild(old_table); 
+            $("#mask"+mask+"i"+posi+"j"+posj).hide('slow', function(){ $("#mask"+mask+"i"+posi+"j"+posj).remove(); });
+        }
+        function createTableFrom(mask, new_mask, posi, posj, r){
+            var new_table = document.getElementById("mask"+mask+"i"+posi+"j"+posj).cloneNode(true);
+            new_table.setAttribute("id","mask"+new_mask+"i"+posi+"j"+posj);
+            //document.body.appendChild(new_table);
+            //document.getElementById("container2").appendChild(new_table);
+            $(new_table).appendTo('#container2').hide().fadeIn(1000);
+            var t = document.getElementById("mask"+new_mask+"i"+posi+"j"+posj);
+            //var cell = t.getElementsByClassName(posi+'_'+posj);
+            var cl = 'class'+posi.toString()+'_'+posj.toString();
+            var cell = t.getElementsByClassName(cl);
+            cell[0].style.backgroundColor = "grey";
+            if (r == true) {
+                document.getElementById("mask"+new_mask+"i"+posi+"j"+posj).getElementsByClassName('class'+(posi)+'_'+(posj+1))[0].innerHTML = '1';
+                document.getElementById("mask"+new_mask+"i"+posi+"j"+posj).getElementsByClassName('class'+(posi+1)+'_'+(posj))[0].innerHTML = '0';
+                 document.getElementById("mask"+new_mask+"i"+posi+"j"+posj).getElementsByClassName('class'+(posi)+'_'+(posj+1))[0].style.backgroundColor = 'yellow';
+                document.getElementById("mask"+new_mask+"i"+posi+"j"+posj).getElementsByClassName('class'+(posi+1)+'_'+(posj))[0].style.backgroundColor = 'red';
+            } else {
+                document.getElementById("mask"+new_mask+"i"+posi+"j"+posj).getElementsByClassName('class'+(posi)+'_'+(posj+1))[0].innerHTML = '0';
+                document.getElementById("mask"+new_mask+"i"+posi+"j"+posj).getElementsByClassName('class'+(posi+1)+'_'+(posj))[0].innerHTML = '1';
+                 document.getElementById("mask"+new_mask+"i"+posi+"j"+posj).getElementsByClassName('class'+(posi)+'_'+(posj+1))[0].style.backgroundColor = 'yellow';
+                document.getElementById("mask"+new_mask+"i"+posi+"j"+posj).getElementsByClassName('class'+(posi+1)+'_'+(posj))[0].style.backgroundColor = 'red';
+            }
+            //alert(cell[0].innerHTML);    
+        }
+        function createTableNewColumn(n,m,mask, new_mask, posi, posj){
+            var new_table = document.getElementById("mask"+mask+"i"+posi+"j"+posj).cloneNode(true);
+            new_table.setAttribute("id","mask"+new_mask+"i"+0+"j"+(posj+1));
+            $(new_table).appendTo('#container2').hide().fadeIn(1000);
+            var t = document.getElementById("mask"+new_mask+"i"+0+"j"+(posj+1));
+            //var cell = t.getElementsByClassName(posi+'_'+posj);
+            for (var i = 0; i < n; i++){
+                var cl = 'class'+i+'_'+(posj+1);
+                var cell = t.getElementsByClassName(cl);
+                cell[0].style.backgroundColor = "white";
+            }   
+        }
+        function divSwap(){
+            var c2 = document.getElementById("container2");
+            //var c1 = document.getElementById("container1");
+            var len = c2.childElementCount;
+            for(var i = 1; i <= len; i++){
+            //while(c2.firstChild != null){
+                var node1 = c2.childNodes[i];
+                var node2 = node1.cloneNode;
+                //c1.appendChild(node);
+                //$(node1).fadeOut(300, function(){ $(node1).remove(); });
+                //$(html).hide().appendTo("#mycontent").fadeIn(1000);
+                //alert(nodeid.innerHTML);
+                $(node1).clone().appendTo('#container1').hide().fadeIn(500);
+                $(node1).fadeOut(300, function(){ $(node1).remove(); });
+            }
+//            $("#container1").before($("#container2")).animate({}, 400);
+//            document.getElementById("container1").setAttribute("id","container3");
+//            document.getElementById("container2").setAttribute("id","container1");
+//            document.getElementById("container3").setAttribute("id","container2");
+            //$("#container1").swap
+            //$('#container1').animate({top:$("#container2").offset().top}); 
+            //$('#container2').animate({bottom:$("#container2").offset().top});
+        }
+        
+        var direction=[4,7,8,11]
+        function animate(){
+            alert("aa");
+                moveAnimate("#p11",0);
+        }
+
+
+         function moveAnimate(element, count, tableid){
+              console.log(count);
+             if(count >= direction.length) {return; }
+                newParent = '#pos' + direction[count];
+                element = $(element); //Allow passing in either a JQuery object or selector
+                newParent= $(newParent); //Allow passing in either a JQuery object or selector
+                var oldOffset = element.offset();
+                element.appendTo(newParent);
+                var newOffset = element.offset();
+
+                var temp = element.clone().appendTo('body');
+                temp    .css('position', 'absolute')
+                        .css('left', oldOffset.left)
+                        .css('top', oldOffset.top)
+                        .css('zIndex', 1000);
+                element.hide();
+                temp.animate( {'top': newOffset.top, 'left':newOffset.left}, 'slow', function(){
+                   element.show();
+                   temp.remove();
+                   count++;
+                   moveAnimate(element,count);
+                });
+            }
+        function moveAnimate(element, count, tableid){
+              console.log(count);
+             if(count >= direction.length) {return; }
+                newParent = '#pos' + direction[count];
+                element = $(element); //Allow passing in either a JQuery object or selector
+                newParent= $(newParent); //Allow passing in either a JQuery object or selector
+                var oldOffset = element.offset();
+                element.appendTo(newParent);
+                var newOffset = element.offset();
+
+                var temp = element.clone().appendTo('body');
+                temp    .css('position', 'absolute')
+                        .css('left', oldOffset.left)
+                        .css('top', oldOffset.top)
+                        .css('zIndex', 1000);
+                element.hide();
+                temp.animate( {'top': newOffset.top, 'left':newOffset.left}, 'slow', function(){
+                   element.show();
+                   temp.remove();
+                   count++;
+                   moveAnimate(element,count);
+                });
+            }
+        $("#move").click(function (){
+              createTable(document.getElementById("n").value,document.getElementById("m").value);
+        });
+        $("#swap").click(function (){
+              divSwap();
+        });
+        $("#copy").click(function (){
+            //alert("aa");
+              //  animate();
+              createTableFrom(0,1,0,0,true);
+            createTableFrom(0,2,0,0,false);
+            delTable(0,0,0,0);
+        });
+    </script>
+</body>
+</html>

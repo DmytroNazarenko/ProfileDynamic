@@ -1,0 +1,208 @@
+<script>
+    
+
+    
+</script>
+<html>
+    <head>
+        <script src="jquery-3.1.1.min.js"></script>
+        <link rel="stylesheet" href="style.css" />
+
+
+    </head>
+<body >
+    <p>N:  <input type="text" id="n" ></input></p>
+    <p>M:  <input type="text" id = "m"></input></p>
+    <button id="move" >Поехали!</button>
+    <button id="copy" >Создать</button>
+    <button id="swap" >swap</button>
+<!--    <div id="container0" style="height:250px"></div>-->
+    <div id="container1" class="container">
+    </div>
+    <div id="container2" class = "container">
+    </div>
+    <script>
+        function createTable( n, m, posi, posj, mask){
+            var table1 = document.createElement('table');
+            var att = document.createAttribute("border");       
+            att.value = "1";       
+            table1.setAttributeNode(att);
+            table1.setAttribute("id","mask0i0j0");
+            var att1 = document.createAttribute("cellspacing");       
+            att1.value = "0";                           
+            table1.setAttributeNode(att1);
+            for (var i = 0; i < n; i++){
+                var tr = document.createElement('tr');   
+                
+                for (var j = 0; j < m; j++){
+                    
+                    var td1 = document.createElement('td');
+                    //td1.className = 'aaa';
+                    var cl = 'class'+i.toString()+'_'+j.toString()
+                    td1.className = cl;
+                    //td1.className = i+'_'+j;
+//                    var attr1 = document.createAttribute("id");      
+//                        attr1.value = "1";
+                    if (i == 0 && j == 0){
+                        td1.style.backgroundColor = "red";
+                        td1.innerHTML = '0';
+                    }
+                    tr.appendChild(td1);
+                    
+                }
+
+
+                table1.appendChild(tr);
+            }
+            //document.body.appendChild(table1);
+            //document.getElementById("container1"). 
+            $(table1).appendTo("#container1").hide().fadeIn(1000);
+        }
+         
+        function delTable(mask, posi, posj){
+            //var old_table = document.getElementById("mask"+mask+"i"+posi+"j"+posj);
+            //old_table.parentElement.removeChild(old_table); 
+            $("#mask"+mask+"i"+posi+"j"+posj).hide('slow', function(){ $("#mask"+mask+"i"+posi+"j"+posj).remove(); });
+        }
+        function createTableFrom(n,m, mask, new_mask, posi, posj, r, bool){
+            var new_table = document.getElementById("mask"+mask+"i"+posi+"j"+posj).cloneNode(true);
+            new_table.setAttribute("id","mask"+new_mask+"i"+(posi+1)+"j"+(posj));
+            //document.body.appendChild(new_table);
+            //document.getElementById("container2").appendChild(new_table);
+            $(new_table).appendTo('#container2').hide().fadeIn(1000);
+            var t = document.getElementById("mask"+new_mask+"i"+(posi+1)+"j"+(posj));
+            //var cell = t.getElementsByClassName(posi+'_'+posj);
+            var cl = 'class'+posi.toString()+'_'+posj.toString();
+            var cell = t.getElementsByClassName(cl);
+            cell[0].style.backgroundColor = "grey";
+            if (bool == true){
+                if (posj + 1 < m) t.getElementsByClassName('class'+(posi)+'_'+(posj+1))[0].innerHTML = '0';
+                if (posi + 1 < n) t.getElementsByClassName('class'+(posi+1)+'_'+(posj))[0].innerHTML = '0';
+            }else if (r == true) {
+                if (posj + 1 < m) t.getElementsByClassName('class'+(posi)+'_'+(posj+1))[0].innerHTML = '1';
+                if (posi + 1 < n) t.getElementsByClassName('class'+(posi+1)+'_'+(posj))[0].innerHTML = '0';
+            } else {
+                if (posj + 1 < m) t.getElementsByClassName('class'+(posi)+'_'+(posj+1))[0].innerHTML = '0';
+                if (posi + 1 < n) t.getElementsByClassName('class'+(posi+1)+'_'+(posj))[0].innerHTML = '1';
+            }
+            if (posj + 1 < m) t.getElementsByClassName('class'+(posi)+'_'+(posj+1))[0].style.backgroundColor = 'yellow';
+            if (posi + 1 < n) t.getElementsByClassName('class'+(posi+1)+'_'+(posj))[0].style.backgroundColor = 'red';
+            //alert(cell[0].innerHTML);    
+        }
+        function createTableNewColumn(n,m,mask, new_mask, posi, posj){
+            var new_table = document.getElementById("mask"+mask+"i"+posi+"j"+posj).cloneNode(true);
+            new_table.setAttribute("id","mask"+new_mask+"i"+0+"j"+(posj+1));
+            $(new_table).appendTo('#container2').hide().fadeIn(1000);
+            var t = document.getElementById("mask"+new_mask+"i"+0+"j"+(posj+1));
+            //var cell = t.getElementsByClassName(posi+'_'+posj);
+            for (var ii = 0; ii < n; ii++){
+                var cl = 'class'+ii+'_'+(posj+1);
+                var cell = t.getElementsByClassName(cl);
+                if (ii === 0) cell[0].style.backgroundColor = "red";
+                else cell[0].style.backgroundColor = "white";
+            }   
+        }
+        function divSwap(){
+            var c2 = document.getElementById("container2");
+            //var c1 = document.getElementById("container1");
+            var len = c2.childElementCount;
+            //for(var i = 0; i <= len; i++){
+            while(c2.childElementCount != 0){
+                var node1 = c2.children[0];
+                //var node2 = node1.cloneNode;
+                $(node1).clone().appendTo('#container1').hide().fadeIn(500);
+                $(node1).fadeIn(500, function(){ $(node1).remove(); });
+            }
+        }
+        
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        async function solve(n, m)
+            {
+                if (n > m) {
+                    var tmp;
+                    tmp = n;
+                    n = m;
+                    m = tmp;
+                }
+                var d = [];
+                for(var i = 0 ; i < m+1; i++){
+                    d[i] = [];
+                    for(var j = 0; j < n+1; j++){
+                        d[i][j] = [];
+                        for(var k = 0; k < (1 << n); k++) {
+                            d[i][j][k] = 0;
+                        }
+                    }
+                }
+
+
+                d[0][0][0] = 1;
+                for(var i = 0; i < parseInt(m); i++) {
+                    for(var j = 0; j < parseInt(n) + 1; j++) {
+                        for (var k = 0; k < (1 << n); k++) {
+                            if (j == n) {
+                                d[i + 1][0][k] += d[i][j][k];
+                                if (d[i][j][k] != 0) {
+                                    createTableNewColumn(n,m,k, k, j, i);
+                                    delTable(k,j,i);
+                                    await sleep(2000);
+                                }
+                                continue;
+                            }
+                            if ((k & (1 << (n - j - 1))) === 0) {
+                                if (i != m - 1) {
+                                    d[i][j + 1][k + (1 << (n - j - 1))] += d[i][j][k];
+                                    if (d[i][j][k] != 0){
+                                        
+                                        createTableFrom(n,m,k, k + (1 << (n - j - 1)), j, i,true, false);
+                                        await sleep(2000);
+                                    }
+                                    
+                                }
+                                if (j != n - 1 && (k & (1 << (n - j - 2))) === 0) {
+                                    d[i][j + 1][k + (1 << (n - j - 2))] += d[i][j][k];
+                                    if (d[i][j][k] != 0) {
+                                        
+                                        createTableFrom(n,m,k, k + (1 << (n - j - 2)), j, i,false, false);
+                                        await sleep(2000);
+                                    }
+                                }
+                            }
+                            else {
+                                d[i][j + 1][k - (1 << (n - j - 1))] += d[i][j][k];
+                                 if (d[i][j][k] != 0) {
+                                        
+                                        createTableFrom(n,m,k, k - (1 << (n - j - 1)), j, i,false, true);
+                                        await sleep(2000);
+                                    }
+                            }
+                            if (d[i][j][k] != 0){
+                                delTable(k, j, i);
+                                await sleep(2000);
+                            }
+                        }
+                        divSwap();
+                        await sleep(3000);
+                    }
+                }
+
+                var sum = 0;
+                for (var k = 0; k < (1 << n); k++) {
+                    sum += d[m][0][k];
+                }
+                return sum;
+            }
+        
+        $("#move").click(async function (){
+            createTable(document.getElementById("n").value,document.getElementById("m").value);
+            await sleep(1500);
+            solve(document.getElementById("n").value,document.getElementById("m").value);
+        });
+        $("#copy").click(function (){
+            createTable(document.getElementById("n").value,document.getElementById("m").value);
+        });
+    </script>
+</body>
+</html>
