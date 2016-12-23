@@ -12,11 +12,11 @@
     </head>
 <body >
     <div id = "settings">
-        <p>N:  <input type="text" id="n" ></input></p>
-        <p>M:  <input type="text" id = "m"></input></p>
-        <button id="move" >Поехали!</button>
-        <button id="copy" >Создать</button>
-        <button id="swap" >swap</button>
+        <p>N: <input type="text" id="n" ></input></p>
+        <p>M: <input type="text" id = "m"></input></p>
+<input type="range" min="10" max="30" value="30" id="cellSize" />Масштаб<br/>
+<input type="range" min="100" max="3000" value="30" id="speed" />Скорость<br/>
+        <button id="move" >Поехали</button>
     </div>
 <!--    <div id="container0" style="height:250px"></div>-->
     <div id="container1" class="container">
@@ -24,7 +24,8 @@
     <div id="container2" class = "container">
     </div>
     <script>
-        
+        var animTime = 100;
+        var swapTime = 10;
         function createTable( n, m, posi, posj, mask){
             var table1 = document.createElement('table');
             table1.setAttribute("border","1");
@@ -55,21 +56,23 @@
             }
             //document.body.appendChild(table1);
             //document.getElementById("container1"). 
-            $(table1).appendTo("#container1").hide().fadeIn(1000);
-        }         
+            $(table1).appendTo("#container1").hide().fadeIn(animTime);
+        }
+        
         function delTable(mask, posi, posj,counter){
             //var old_table = document.getElementById("mask"+mask+"i"+posi+"j"+posj);
             //old_table.parentElement.removeChild(old_table);
             var t = document.getElementsByClassName("mask"+mask+"i"+posi+"j"+posj)[counter];
-            $(t).hide('slow', function(){ $(t).remove(); });
+            $(t).fadeOut(animTime, function(){ $(t).remove(); });
         }
+        
         function createTableFrom(n,m, mask, new_mask, posi, posj, r, bool, counter){
             var t = document.getElementsByClassName("mask"+mask+"i"+posi+"j"+posj)[counter].cloneNode(true);
             t.setAttribute("class","mask"+new_mask+"i"+(posi+1)+"j"+(posj));
             t.style.boxShadow="";
             //document.body.appendChild(new_table);
             //document.getElementById("container2").appendChild(new_table);
-            $(t).appendTo('#container2').hide().fadeIn(1000);
+            $(t).appendTo('#container2').hide().fadeIn(animTime);
             //var t = document.getElementById("mask"+new_mask+"i"+(posi+1)+"j"+(posj));
             //var cell = t.getElementsByClassName(posi+'_'+posj);
             var cl = 'class'+posi.toString()+'_'+posj.toString();
@@ -99,31 +102,64 @@
             if (posi + 1 < n) t.getElementsByClassName('class'+(posi+1)+'_'+(posj))[0].style.backgroundColor = 'red';
             //alert(cell[0].innerHTML);    
         }
+        
         function createTableNewColumn(n,m,mask, new_mask, posi, posj, counter){
             var new_table = document.getElementsByClassName("mask"+mask+"i"+posi+"j"+posj)[counter].cloneNode(true);
             new_table.setAttribute("class","mask"+new_mask+"i"+0+"j"+(posj+1));
             new_table.style.boxShadow="";
-            $(new_table).appendTo('#container2').hide().fadeIn(1000);
-            //var t = document.getElementById("mask"+new_mask+"i"+0+"j"+(posj+1));
-            //var cell = t.getElementsByClassName(posi+'_'+posj);
-            for (var ii = 0; ii < n; ii++){
+             for (var ii = 0; ii < n; ii++){
                 var cl = 'class'+ii+'_'+(posj+1);
                 var cell = new_table.getElementsByClassName(cl);
                 if (ii === 0) cell[0].style.backgroundColor = "red";
                 else cell[0].style.backgroundColor = "white";
-            }   
+            } 
+            $(new_table).appendTo('#container2').hide().fadeIn(10);
+            //$(node1).clone().appendTo('#container1').hide().fadeIn(1000);
+                //$(node1).hide('slow', function(){ $(node1).remove(); });
+                //$(node1).hide('slow');
+            //$(node1).fadeOut(1000, function(){ $(node1).remove(); });
+            //var t = document.getElementById("mask"+new_mask+"i"+0+"j"+(posj+1));
+            //var cell = t.getElementsByClassName(posi+'_'+posj);
+             
         }
+        
         function divSwap(){
             var c2 = document.getElementById("container2");
             //var c1 = document.getElementById("container1");
             var len = c2.childElementCount;
-            //for(var i = 0; i <= len; i++){
+//            for(var i = 0; i < len; i++){
+//            //while(c2.children.length > 0){
+//                var node1 = c2.children[i];
+//                //var node2 = node1.cloneNode;
+//                $(node1).fadeOut(1000, function(){ $(node1).remove(); });
+//                $(node1).clone().appendTo('#container1').hide().fadeIn(1000);
+//                //$(node1).hide('slow', function(){ $(node1).remove(); });
+//                //$(node1).hide('slow');
+//                
+//            }
+            
             while(c2.childElementCount != 0){
                 var node1 = c2.children[0];
                 //var node2 = node1.cloneNode;
-                $(node1).clone().appendTo('#container1').hide().fadeIn(500);
-                $(node1).fadeIn(500, function(){ $(node1).remove(); });
+                $(node1).fadeIn(10, function(){ $(node1).remove(); });
+                $(node1).clone().appendTo('#container1').hide().fadeIn(animTime);
+                
             }
+            
+//            var c2 = document.getElementById("container2");
+//            //var c1 = document.getElementById("container1");
+//            var len = c2.childElementCount;
+//            for(var i = 1; i <= len; i++){
+//            //while(c2.firstChild != null){
+//                var node1 = c2.childNodes[i];
+//                var node2 = node1.cloneNode;
+//                //c1.appendChild(node);
+//                //$(node1).fadeOut(300, function(){ $(node1).remove(); });
+//                //$(html).hide().appendTo("#mycontent").fadeIn(1000);
+//                //alert(nodeid.innerHTML);
+//                $(node1).clone().appendTo('#container1').hide().fadeIn(500);
+//                $(node1).fadeOut(500, function(){ $(node1).remove(); });
+//            }
         }
         
         function sleep(ms) {
@@ -131,12 +167,12 @@
         }
         async function solve(n, m)
             {
-                if (n > m) {
-                    var tmp;
-                    tmp = n;
-                    n = m;
-                    m = tmp;
-                }
+//                if (n > m) {
+//                    var tmp;
+//                    tmp = n;
+//                    n = m;
+//                    m = tmp;
+//                }
                 var d = [];
                 for(var i = 0 ; i < m+1; i++){
                     d[i] = [];
@@ -154,15 +190,15 @@
                     for(var j = 0; j < parseInt(n) + 1; j++) {
                         for (var k = 0; k < (1 << n); k++) {
                             var arr = document.getElementsByClassName("mask"+k+"i"+j+"j"+i);
-                            if (!(i == parseInt(m)-1 && j == n))
+                            if (!(i == parseInt(m)-1 && j == parseInt(n)))
                             for (var ii = 0; ii < arr.length; ii++) arr[ii].style.boxShadow='0px 0px 13px 0px #008000';
                             if (j == n) {
                                 d[i + 1][0][k] += d[i][j][k];
                                 if (d[i][j][k] != 0 && i != parseInt(m)-1) {
-                                    while ( document.getElementsByClassName("mask"+k+"i"+j+"j"+i).length != 0){
+                                    while ( document.getElementsByClassName("mask"+k+"i"+j+"j"+i).length != 0)                                     {
                                         createTableNewColumn(n,m,k, k, j, i, 0);
                                         delTable(k,j,i, 0);
-                                        await sleep(2000);
+                                        await sleep(2*animTime);
                                     }
                                 }
                                 continue;
@@ -173,7 +209,7 @@
                                     if (d[i][j][k] != 0){
                                         for (var ii = 0; ii < arr.length; ii++){
                                             createTableFrom(n,m,k, k + (1 << (n - j - 1)), j, i,true, false, ii);
-                                            await sleep(2000);
+                                            await sleep(3*animTime);
                                         }
                                     }
                                     
@@ -183,7 +219,7 @@
                                     if (d[i][j][k] != 0) {
                                         for (var ii = 0; ii < arr.length; ii++){
                                             createTableFrom(n,m,k, k + (1 << (n - j - 2)), j, i,false, false, ii);
-                                            await sleep(2000);
+                                            await sleep(2*animTime);
                                         }
                                     }
                                 }
@@ -193,19 +229,19 @@
                                  if (d[i][j][k] != 0) {
                                         for (var ii = 0; ii < arr.length; ii++){
                                             createTableFrom(n,m,k, k - (1 << (n - j - 1)), j, i,false, true, ii);
-                                            await sleep(2000);
+                                            await sleep(3*animTime);
                                         }
                                     }
                             }
                             if (d[i][j][k] != 0){
                                 while ( document.getElementsByClassName("mask"+k+"i"+j+"j"+i).length != 0){
                                     delTable(k, j, i, 0);
-                                    await sleep(2000);
+                                    await sleep(3*animTime);
                                 }
                             }
                         }
                         divSwap();
-                        await sleep(2000);
+                        await sleep(3*animTime);
                     }
                 }
 
@@ -218,11 +254,13 @@
         
         $("#move").click(async function (){
             createTable(document.getElementById("n").value,document.getElementById("m").value);
-            await sleep(1500);
+            await sleep(3*animTime);
             solve(document.getElementById("n").value,document.getElementById("m").value);
         });
-        $("#copy").click(function (){
-            createTable(document.getElementById("n").value,document.getElementById("m").value);
+        $("#cellSize").change(function (){
+            $('td').css({"height": document.getElementById("cellSize").value+"px"});
+            $('td').css({"width": document.getElementById("cellSize").value +"px"});
+            $('td').css({"font-size": (parseInt(document.getElementById("cellSize").value)-3) +"px"});
         });
     </script>
 </body>
