@@ -34,13 +34,13 @@
 <div class="header"><span style="position: relative; top:5px; font-size:20px;"> Текущие состояния</span></div>
     <div id="container1" class="container">
     </div>
-<div class="header"><span style="position: relative; top:5px; font-size:20px;"> Переходы</span></div>
+<div class="header"><span style="position: relative; top:5px; font-size:20px;">Состояния, в которые мы переходим</span></div>
     <div id="container2" class = "container">
     </div>
     <footer>
         <div > <button id="move" >Go!</button></div>
         <div><button id = "console">Комментарии</button></div>
-        <div id="cellSizeDiv"><input type="range" min="3" max="30" value="30" id="cellSize" /><span style="position: relative; top:-20px; left: 220px; font-size:16px; font-weight = bold;">Масштаб</span></div>
+        <div id="cellSizeDiv"><input type="range" min="4" max="30" value="30" id="cellSize" /><span style="position: relative; top:-20px; left: 220px; font-size:16px; font-weight = bold;">Масштаб</span></div>
         <div><button id = "step">Следующий шаг</button></div>
     </footer>    
     <script>
@@ -191,12 +191,12 @@
 //            editor.val("");
 //            editor.focus();
 //            editor.val(value);
-            document.getElementById("textbox").innerHTML += str + " " + num+ "&#13;&#10;";
+            document.getElementById("textbox").innerHTML = str + " " + num+ "&#13;&#10;" + document.getElementById("textbox").innerHTML;
 //            document.getElementById("textbox").focus();
 //            document.getElementById("textbox").setSelectionRange( document.getElementById("textbox").length,  document.getElementById("textbox").length);
         }
         function addText1(str){
-            document.getElementById("textbox").innerHTML += str+"&#13;&#10;";
+            document.getElementById("textbox").innerHTML = str+"&#13;&#10;" + document.getElementById("textbox").innerHTML;
         }
         
         is_clicked = true;
@@ -411,23 +411,29 @@
         $("#move").click(async function (){
             _n = document.getElementById("n").value;
             _m = document.getElementById("m").value;
+            if (_n != "" && _m != ""){
             animTime = document.getElementById("ComboBox").value;
             $("#settings").fadeOut(1000);
             $("#move").fadeOut(2000);
-            $("#step").fadeOut(2000);
+            
             createTable(_n,_m);
             if (document.getElementById("ComboBox1").value == 2){
+                $("#step").fadeOut(2000);
                 await sleep(3*animTime);
                 solve(document.getElementById("n").value,document.getElementById("m").value);
             }
-            
+            } else alert("Введите N и М!!!");
         });
         $("#cellSize").change(function (){
             $('td').css({"height": document.getElementById("cellSize").value+"px"});
             $('td').css({"width": document.getElementById("cellSize").value +"px"});
-            $('td').css({"font-size": auto});//(parseInt(document.getElementById("cellSize").value)-4) +"px"});
+            if (parseInt(document.getElementById("cellSize").value) < 16){
+                $('td').css({"font-size": parseInt(document.getElementById("cellSize").value)-3 + "px"});
+                //(parseInt(document.getElementById("cellSize").value)-4) +"px"});
             //animTime = document.getElementById("speed").value;
-            
+            } 
+            else 
+                $('td').css({"font-size": parseInt(document.getElementById("cellSize").value)-13 + "px"});
         });
         
         let generator = solve_with_steps(_n,_m);
